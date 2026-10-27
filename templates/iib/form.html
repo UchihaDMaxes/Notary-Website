@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}{{ t('new_iib') if not record else t('edit') }}{% endblock %}
+
+{% block content %}
+<div style="max-width:840px;">
+  <div class="page-head">
+    <div>
+      <a href="{{ url_for('iib.list') }}" class="card-link">&larr; {{ t('back') }}</a>
+      <h1 class="page-title mt-2">{{ t('new_iib') if not record else t('edit') ~ ' — #' ~ record.id }}</h1>
+    </div>
+  </div>
+
+  <form method="post" enctype="multipart/form-data" class="card">
+    <div class="card-body-lg">
+
+      <section class="section">
+        <div class="section-title">{{ t('iib') }} — {{ t('type') }}</div>
+        <div class="form-grid">
+          <div class="field">
+            <label class="label" for="date">{{ t('date') }}</label>
+            <input class="input" type="date" id="date" name="date" value="{{ record.date.isoformat() if record and record.date else '' }}" />
+          </div>
+          <div class="field">
+            <label class="label" for="faahfaahin">{{ t('faahfaahin') }}</label>
+            <select class="select" id="faahfaahin" name="faahfaahin">
+              <option value="">—</option>
+              {% for opt in IIB_TYPES %}<option value="{{ opt }}" {{ 'selected' if record and record.faahfaahin == opt }}>{{ type_label(opt) }}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="field">
+            <label class="label" for="cabir">{{ t('cabir') }}</label>
+            <input class="input" type="text" id="cabir" name="cabir" value="{{ record.cabir if record and record.cabir else '' }}" />
+          </div>
+          <div class="field">
+            <label class="label" for="qiime">{{ t('qiime') }}</label>
+            <input class="input" type="number" step="0.01" id="qiime" name="qiime" value="{{ record.qiime if record and record.qiime is not none else '' }}" />
+          </div>
+          <div class="field span-2">
+            <label class="label" for="kuyaalla">{{ t('kuyaalla') }}</label>
+            <input class="input" type="text" id="kuyaalla" name="kuyaalla" value="{{ record.kuyaalla if record and record.kuyaalla else '' }}" />
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">{{ t('iibiye') }} / {{ t('iibsade') }} / {{ t('damiin') }}</div>
+        <div class="form-grid">
+          <div class="field">
+            <label class="label" for="iibiye">{{ t('iibiye') }}</label>
+            <input class="input" type="text" id="iibiye" name="iibiye" value="{{ record.iibiye if record and record.iibiye else '' }}" />
+          </div>
+          <div class="field">
+            <label class="label" for="number1">{{ t('number') }} · {{ t('iibiye') }}</label>
+            <input class="input" type="text" id="number1" name="number1" value="{{ record.number1 if record and record.number1 else '' }}" />
+          </div>
+          <div class="field">
+            <label class="label" for="iibsade">{{ t('iibsade') }}</label>
+            <input class="input" type="text" id="iibsade" name="iibsade" value="{{ record.iibsade if record and record.iibsade else '' }}" />
+          </div>
+          <div class="field">
+            <label class="label" for="number2">{{ t('number') }} · {{ t('iibsade') }}</label>
+            <input class="input" type="text" id="number2" name="number2" value="{{ record.number2 if record and record.number2 else '' }}" />
+          </div>
+          <div class="field">
+            <label class="label" for="damiin">{{ t('damiin') }}</label>
+            <input class="input" type="text" id="damiin" name="damiin" value="{{ record.damiin if record and record.damiin else '' }}" />
+          </div>
+          <div class="field">
+            <label class="label" for="number3">{{ t('number') }} · {{ t('damiin') }}</label>
+            <input class="input" type="text" id="number3" name="number3" value="{{ record.number3 if record and record.number3 else '' }}" />
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">{{ t('notes') }} &amp; {{ t('documents') }}</div>
+        <div class="field mb-4">
+          <label class="label" for="notes">{{ t('notes') }}</label>
+          <textarea class="textarea" id="notes" name="notes" rows="3">{{ record.notes if record and record.notes else '' }}</textarea>
+        </div>
+        <div class="field">
+          <label class="label">{{ t('documents') }}</label>
+          {% include "_doc_picker.html" %}
+        </div>
+      </section>
+
+      <div class="divider"></div>
+      <div class="flex gap-2">
+        <button type="submit" class="btn btn-primary">{{ t('save') }}</button>
+        <a href="{{ url_for('iib.list') }}" class="btn btn-outline">{{ t('cancel') }}</a>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}

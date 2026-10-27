@@ -1,0 +1,44 @@
+{% macro value_or_dash(v) %}{{ v if (v is not none and v != '') else '—' }}{% endmacro %}
+
+{% macro money(v) %}{% if v is not none %}{{ '{:,.2f}'.format(v) }}{% else %}—{% endif %}{% endmacro %}
+
+{% macro phone_link(num) %}
+  {% if num %}<a href="tel:{{ num }}">{{ num }}</a>{% else %}—{% endif %}
+{% endmacro %}
+
+{% macro doc_grid(docs, doc_endpoint, del_endpoint) %}
+  {% if docs %}
+  <div class="doc-grid">
+    {% for d in docs %}
+    <div class="doc-item">
+      {% if d.is_image %}
+        <a href="{{ url_for(doc_endpoint, doc_id=d.id) }}" target="_blank">
+          <img src="{{ url_for(doc_endpoint, doc_id=d.id) }}" alt="{{ d.original_name }}" class="doc-thumb" loading="lazy" />
+        </a>
+      {% else %}
+        <a href="{{ url_for(doc_endpoint, doc_id=d.id) }}" target="_blank" class="doc-pdf">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M14 2v5a1 1 0 0 0 1 1h5M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7l-5-5Z"/></svg>
+          <span>PDF</span>
+        </a>
+      {% endif %}
+      <div class="doc-name" title="{{ d.original_name }}">{{ d.original_name }}</div>
+      <div class="doc-meta">{{ d.human_size }}</div>
+      <form method="post" action="{{ url_for(del_endpoint, doc_id=d.id) }}" data-confirm="{{ t('confirm_delete') }}" class="inline-form">
+        <button class="doc-del" title="{{ t('delete') }}">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 7h12m-8 0 .5 12a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1L16 7M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/></svg>
+        </button>
+      </form>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="muted small">{{ t('no_documents') }}</p>
+  {% endif %}
+{% endmacro %}
+
+{% macro kv(label, value) %}
+  <div>
+    <div class="kv-label">{{ label }}</div>
+    <div class="kv-value">{{ value_or_dash(value) }}</div>
+  </div>
+{% endmacro %}

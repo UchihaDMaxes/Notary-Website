@@ -1,0 +1,21 @@
+# Local virtualenv
+.venv/
+venv/
+env/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Local data — never commit records or scans
+notary.db
+*.sqlite3
+uploads/
+data/
+
+# Secrets & editor files
+.env
+.idea/
+.vscode/
+*.log

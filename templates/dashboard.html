@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}{{ t('dashboard') }} · {{ t('app_name') }}{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">{{ t('dashboard') }}</h1>
+    <p class="page-sub">{{ t('welcome_back') }}, {{ current_user.full_name }}</p>
+  </div>
+  <div class="page-actions">
+    <a href="{{ url_for('iib.new') }}" class="btn btn-primary btn-sm">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M12 4v16m8-8H4"/></svg>
+      {{ t('new_iib') }}
+    </a>
+    <a href="{{ url_for('heshiis.new') }}" class="btn btn-outline btn-sm">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M12 4v16m8-8H4"/></svg>
+      {{ t('new_heshiis') }}
+    </a>
+  </div>
+</div>
+
+<!-- KPI cards -->
+<div class="stats">
+  {% for s in stats %}
+  <div class="stat">
+    <div>
+      <div class="stat-label">{{ s.label }}</div>
+      <div class="stat-value">{{ s.value }}</div>
+    </div>
+    <div class="stat-icon i-{{ s.accent }}">
+      {% if s.icon == 'iib' %}
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13 5.4 5M7 13l-2.3 2.3A1 1 0 0 0 5.4 17H17m0 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm-8 2a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z"/></svg>
+      {% elif s.icon == 'heshiis' %}
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2Z"/></svg>
+      {% elif s.icon == 'doc' %}
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M14 2v5a1 1 0 0 0 1 1h5M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7l-5-5Z"/></svg>
+      {% else %}
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5Zm0 7a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-2Zm0 7a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-2Z"/></svg>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="form-grid" style="grid-template-columns:1fr 1fr;gap:18px;">
+  <!-- Recent IIB -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">{{ t('recent_iib') }}</span>
+      <a href="{{ url_for('iib.list') }}" class="card-link">{{ t('all_records') }} &rarr;</a>
+    </div>
+    {% if recent_iib %}
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>{{ t('date') }}</th><th>{{ t('type') }}</th><th>{{ t('iibiye') }}</th></tr></thead>
+        <tbody>
+          {% for r in recent_iib %}
+          <tr class="row-link" onclick="location.href='{{ url_for('iib.detail', record_id=r.id) }}'">
+            <td class="mono nowrap">{{ r.date.strftime('%Y-%m-%d') if r.date else '—' }}</td>
+            <td><span class="badge badge-amber">{{ type_label(r.faahfaahin) }}</span></td>
+            <td class="cell-strong truncate" style="max-width:140px;">{{ r.iibiye or '—' }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="table-empty">{{ t('no_recent') }}</div>
+    {% endif %}
+  </div>
+
+  <!-- Recent HESHIIS -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">{{ t('recent_heshiis') }}</span>
+      <a href="{{ url_for('heshiis.list') }}" class="card-link">{{ t('all_records') }} &rarr;</a>
+    </div>
+    {% if recent_heshiis %}
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>{{ t('date') }}</th><th>{{ t('type') }}</th><th>{{ t('kireeye') }}</th></tr></thead>
+        <tbody>
+          {% for r in recent_heshiis %}
+          <tr class="row-link" onclick="location.href='{{ url_for('heshiis.detail', record_id=r.id) }}'">
+            <td class="mono nowrap">{{ r.date.strftime('%Y-%m-%d') if r.date else '—' }}</td>
+            <td><span class="badge badge-blue">{{ type_label(r.faahfaahin) }}</span></td>
+            <td class="cell-strong truncate" style="max-width:140px;">{{ r.kireeye or '—' }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="table-empty">{{ t('no_recent') }}</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

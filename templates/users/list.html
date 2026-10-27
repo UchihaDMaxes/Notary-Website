@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}{{ t('manage_users') }}{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">{{ t('manage_users') }}</h1>
+    <p class="page-sub">{{ users|length }} {{ t('users')|lower }}</p>
+  </div>
+  <div class="page-actions">
+    <a href="{{ url_for('users.new') }}" class="btn btn-primary">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M12 4v16m8-8H4"/></svg>
+      {{ t('create_user') }}
+    </a>
+  </div>
+</div>
+
+<div class="card">
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th style="width:52px;">#</th>
+          <th>{{ t('full_name') }}</th>
+          <th>{{ t('username') }}</th>
+          <th>{{ t('role') }}</th>
+          <th>{{ t('active') }}</th>
+          <th>{{ t('created_at') }}</th>
+          <th class="text-right">{{ t('actions') }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in users %}
+        <tr>
+          <td class="num">{{ u.id }}</td>
+          <td class="cell-strong">{{ u.full_name }}</td>
+          <td class="muted">@{{ u.username }}</td>
+          <td><span class="badge {{ 'badge-purple' if u.is_admin else 'badge-slate' }}">{{ t(u.role_label_key) }}</span></td>
+          <td><span class="badge {{ 'badge-green' if u.active else 'badge-slate' }}">{{ t('active') if u.active else t('inactive') }}</span></td>
+          <td class="mono muted nowrap">{{ u.created_at.strftime('%Y-%m-%d') }}</td>
+          <td>
+            <div class="actions">
+              <a href="{{ url_for('users.edit', user_id=u.id) }}" class="btn btn-sm btn-outline">{{ t('edit') }}</a>
+              <form method="post" action="{{ url_for('users.toggle', user_id=u.id) }}" class="inline-form">
+                <button class="btn btn-sm btn-ghost">{{ t('toggle_active') }}</button>
+              </form>
+              {% if u.id != current_user.id %}
+              <form method="post" action="{{ url_for('users.delete', user_id=u.id) }}" data-confirm="{{ t('delete_user_confirm') }}" class="inline-form">
+                <button class="btn btn-sm btn-danger">{{ t('delete') }}</button>
+              </form>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,20 @@
+# Render Blueprint — one-click deploy of the notary app (free plan).
+# Push this folder to GitHub, then: Render → New → Blueprint → pick the repo.
+#
+# NOTE: the free plan has an EPHEMERAL disk, so records/uploads are lost on
+# every deploy and when the service sleeps. Fine for a UI demo — add a paid
+# disk (and DATA_DIR=/var/data) before entering real data.
+services:
+  - type: web
+    name: sh-isaxaaq-notary
+    runtime: python
+    plan: free
+    region: frankfurt
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn wsgi:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+    healthCheckPath: /login
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: SECRET_KEY
+        generateValue: true

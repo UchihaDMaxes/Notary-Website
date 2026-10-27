@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}{{ t('new_heshiis') if not record else t('edit') }}{% endblock %}
+
+{% block content %}
+<div style="max-width:840px;">
+  <div class="page-head">
+    <div>
+      <a href="{{ url_for('heshiis.list') }}" class="card-link">&larr; {{ t('back') }}</a>
+      <h1 class="page-title mt-2">{{ t('new_heshiis') if not record else t('edit') ~ ' — #' ~ record.id }}</h1>
+    </div>
+  </div>
+
+  <form method="post" enctype="multipart/form-data" class="card">
+    <div class="card-body-lg">
+      <section class="section">
+        <div class="section-title">{{ t('heshiis') }}</div>
+        <div class="form-grid">
+          <div class="field">
+            <label class="label" for="date">{{ t('date') }}</label>
+            <input class="input" type="date" id="date" name="date" value="{{ record.date.isoformat() if record and record.date else '' }}" />
+          </div>
+          <div class="field">
+            <label class="label" for="faahfaahin">{{ t('faahfaahin') }}</label>
+            <select class="select" id="faahfaahin" name="faahfaahin">
+              <option value="">—</option>
+              {% for opt in HESHIIS_TYPES %}<option value="{{ opt }}" {{ 'selected' if record and record.faahfaahin == opt }}>{{ type_label(opt) }}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="field">
+            <label class="label" for="qiime">{{ t('qiime') }}</label>
+            <input class="input" type="number" step="0.01" id="qiime" name="qiime" value="{{ record.qiime if record and record.qiime is not none else '' }}" />
+          </div>
+          <div class="field">
+            <label class="label" for="goob">{{ t('goob') }}</label>
+            <input class="input" type="text" id="goob" name="goob" value="{{ record.goob if record and record.goob else '' }}" />
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">{{ t('kireeye') }} / {{ t('kireyste') }}</div>
+        <div class="form-grid">
+          <div class="field">
+            <label class="label" for="kireeye">{{ t('kireeye') }}</label>
+            <input class="input" type="text" id="kireeye" name="kireeye" value="{{ record.kireeye if record and record.kireeye else '' }}" />
+          </div>
+          <div class="field">
+            <label class="label" for="number1">{{ t('number') }} · {{ t('kireeye') }}</label>
+            <input class="input" type="text" id="number1" name="number1" value="{{ record.number1 if record and record.number1 else '' }}" />
+          </div>
+          <div class="field">
+            <label class="label" for="kireyste">{{ t('kireyste') }}</label>
+            <input class="input" type="text" id="kireyste" name="kireyste" value="{{ record.kireyste if record and record.kireyste else '' }}" />
+          </div>
+          <div class="field">
+            <label class="label" for="number2">{{ t('number') }} · {{ t('kireyste') }}</label>
+            <input class="input" type="text" id="number2" name="number2" value="{{ record.number2 if record and record.number2 else '' }}" />
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">{{ t('notes') }} &amp; {{ t('documents') }}</div>
+        <div class="field mb-4">
+          <label class="label" for="notes">{{ t('notes') }}</label>
+          <textarea class="textarea" id="notes" name="notes" rows="3">{{ record.notes if record and record.notes else '' }}</textarea>
+        </div>
+        <div class="field">
+          <label class="label">{{ t('documents') }}</label>
+          {% include "_doc_picker.html" %}
+        </div>
+      </section>
+
+      <div class="divider"></div>
+      <div class="flex gap-2">
+        <button type="submit" class="btn btn-primary">{{ t('save') }}</button>
+        <a href="{{ url_for('heshiis.list') }}" class="btn btn-outline">{{ t('cancel') }}</a>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}

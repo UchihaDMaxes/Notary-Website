@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% import "_macros.html" as m with context %}
+{% block title %}{{ t('search') }}{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">{{ t('search_title') }}</h1>
+    <p class="page-sub">{{ t('search_all') }}</p>
+  </div>
+</div>
+
+<div class="card mb-6">
+  <div class="card-body" style="padding:14px 16px;">
+    <form method="get" class="toolbar">
+      <input name="q" value="{{ q }}" placeholder="{{ t('search_placeholder') }}" autofocus class="input grow" />
+      <button class="btn btn-primary">{{ t('search') }}</button>
+    </form>
+  </div>
+</div>
+
+{% if q %}
+  <p class="muted small mb-3">{{ total }} {{ t('results')|lower }} &mdash; “{{ q }}”</p>
+
+  {% if total == 0 %}
+    <div class="card"><div class="table-empty">{{ t('no_results') }}</div></div>
+  {% endif %}
+
+  {% if iib_results %}
+  <div class="card mb-4">
+    <div class="card-head"><span class="card-title">{{ t('in_iib') }} ({{ iib_results|length }})</span></div>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>#</th><th>{{ t('date') }}</th><th>{{ t('type') }}</th><th>{{ t('iibiye') }}</th><th>{{ t('iibsade') }}</th><th class="text-right">{{ t('qiime') }}</th><th></th></tr></thead>
+        <tbody>
+          {% for r in iib_results %}
+          <tr>
+            <td class="num">{{ r.id }}</td>
+            <td class="mono nowrap">{{ r.date.strftime('%Y-%m-%d') if r.date else '—' }}</td>
+            <td><span class="badge badge-amber">{{ type_label(r.faahfaahin) }}</span></td>
+            <td class="cell-strong">{{ m.value_or_dash(r.iibiye) }}</td>
+            <td>{{ m.value_or_dash(r.iibsade) }}</td>
+            <td class="text-right mono">{{ m.money(r.qiime) }}</td>
+            <td class="text-right"><a href="{{ url_for('iib.detail', record_id=r.id) }}" class="btn btn-sm btn-outline">{{ t('view') }}</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if heshiis_results %}
+  <div class="card">
+    <div class="card-head"><span class="card-title">{{ t('in_heshiis') }} ({{ heshiis_results|length }})</span></div>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>#</th><th>{{ t('date') }}</th><th>{{ t('type') }}</th><th>{{ t('kireeye') }}</th><th>{{ t('kireyste') }}</th><th class="text-right">{{ t('qiime') }}</th><th></th></tr></thead>
+        <tbody>
+          {% for r in heshiis_results %}
+          <tr>
+            <td class="num">{{ r.id }}</td>
+            <td class="mono nowrap">{{ r.date.strftime('%Y-%m-%d') if r.date else '—' }}</td>
+            <td><span class="badge badge-blue">{{ type_label(r.faahfaahin) }}</span></td>
+            <td class="cell-strong">{{ m.value_or_dash(r.kireeye) }}</td>
+            <td>{{ m.value_or_dash(r.kireyste) }}</td>
+            <td class="text-right mono">{{ m.money(r.qiime) }}</td>
+            <td class="text-right"><a href="{{ url_for('heshiis.detail', record_id=r.id) }}" class="btn btn-sm btn-outline">{{ t('view') }}</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+{% else %}
+  <div class="card"><div class="table-empty">{{ t('search_prompt') }}</div></div>
+{% endif %}
+{% endblock %}

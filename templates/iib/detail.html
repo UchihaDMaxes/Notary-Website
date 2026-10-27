@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% import "_macros.html" as m with context %}
+{% block title %}{{ t('iib') }} #{{ record.id }}{% endblock %}
+
+{% block content %}
+<div style="max-width:900px;">
+  <div class="page-head">
+    <div>
+      <a href="{{ url_for('iib.list') }}" class="card-link">&larr; {{ t('back') }}</a>
+      <h1 class="page-title mt-2">{{ t('iib') }} <span class="muted">#{{ record.id }}</span></h1>
+    </div>
+    <div class="page-actions">
+      <button data-print class="btn btn-outline btn-sm">Print</button>
+      <a href="{{ url_for('iib.edit', record_id=record.id) }}" class="btn btn-primary btn-sm">{{ t('edit') }}</a>
+      <form method="post" action="{{ url_for('iib.delete', record_id=record.id) }}" data-confirm="{{ t('confirm_delete') }}" class="inline-form">
+        <button class="btn btn-danger btn-sm">{{ t('delete') }}</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="flex items-center gap-2">
+        <span class="badge badge-amber">{{ type_label(record.faahfaahin) }}</span>
+        <span class="mono muted small">{{ record.date.strftime('%Y-%m-%d') if record.date else '—' }}</span>
+      </div>
+    </div>
+
+    <div class="card-body-lg">
+      <div class="detail-grid">
+        {{ m.kv(t('cabir'), record.cabir) }}
+        {{ m.kv(t('qiime'), m.money(record.qiime)) }}
+        {{ m.kv(t('kuyaalla'), record.kuyaalla) }}
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section-title">{{ t('iibiye') }} / {{ t('iibsade') }} / {{ t('damiin') }}</div>
+      <div class="detail-grid">
+        <div>
+          <div class="kv-label">{{ t('iibiye') }}</div>
+          <div class="kv-value">{{ m.value_or_dash(record.iibiye) }}</div>
+          <div class="kv-sub">{{ m.phone_link(record.number1) }}</div>
+        </div>
+        <div>
+          <div class="kv-label">{{ t('iibsade') }}</div>
+          <div class="kv-value">{{ m.value_or_dash(record.iibsade) }}</div>
+          <div class="kv-sub">{{ m.phone_link(record.number2) }}</div>
+        </div>
+        <div>
+          <div class="kv-label">{{ t('damiin') }}</div>
+          <div class="kv-value">{{ m.value_or_dash(record.damiin) }}</div>
+          <div class="kv-sub">{{ m.phone_link(record.number3) }}</div>
+        </div>
+      </div>
+
+      {% if record.notes %}
+      <div class="divider"></div>
+      <div class="section-title">{{ t('notes') }}</div>
+      <p style="font-size:13.5px;color:#344054;white-space:pre-line;">{{ record.notes }}</p>
+      {% endif %}
+
+      <div class="divider"></div>
+      <div class="section-title">{{ t('documents') }}</div>
+      {{ m.doc_grid(record.documents, 'iib.document', 'iib.document_delete') }}
+
+      <details class="attach-panel">
+        <summary>{{ t('add_documents') }}</summary>
+        <form method="post" action="{{ url_for('iib.attach', record_id=record.id) }}"
+              enctype="multipart/form-data" class="attach-body">
+          <p class="hint" style="margin-top:0;">{{ t('choose_source') }}</p>
+          {% include "_doc_picker.html" %}
+          <div class="mt-3">
+            <button type="submit" class="btn btn-primary btn-sm">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M12 4v16m8-8H4"/></svg>
+              {{ t('add_documents') }}
+            </button>
+          </div>
+        </form>
+      </details>
+    </div>
+  </div>
+</div>
+{% endblock %}
